@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}">
+    <title th:text="${title + ' · CareerFlow'}">CareerFlow</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="/js/app.js" defer></script>
+</head>
+<body>
+<aside th:fragment="sidebar(active, currentUser)" class="sidebar" id="sidebar">
+    <div>
+        <a class="brand" href="/dashboard" aria-label="CareerFlow — início">
+            <span class="brand-mark">C</span>
+            <span>Career<span>Flow</span></span>
+        </a>
+        <p class="nav-label">Workspace</p>
+        <nav class="nav">
+            <a href="/dashboard" th:classappend="${active == 'dashboard'} ? 'active'">
+                <span class="nav-icon">⌂</span> Visão geral
+            </a>
+            <a href="/applications" th:classappend="${active == 'applications'} ? 'active'">
+                <span class="nav-icon">▦</span> Meu pipeline
+            </a>
+            <a href="/applications/new" th:classappend="${active == 'new'} ? 'active'">
+                <span class="nav-icon">＋</span> Nova candidatura
+            </a>
+        </nav>
+
+        <p class="nav-label nav-label-secondary">Ferramentas</p>
+        <nav class="nav">
+            <a href="/docs" target="_blank">
+                <span class="nav-icon">{ }</span> API Docs
+            </a>
+            <a href="/actuator/health" target="_blank">
+                <span class="nav-icon">◉</span> Status
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="user-card">
+            <span class="avatar" th:text="${#strings.substring(currentUser.displayName(), 0, 1)}">M</span>
+            <span class="user-copy">
+                <strong th:text="${currentUser.displayName()}">Marina Costa</strong>
+                <small th:text="${currentUser.email()}">demo@careerflow.dev</small>
+            </span>
+            <form method="post" action="/logout">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="logout-button" type="submit" title="Sair" aria-label="Sair">↗</button>
+            </form>
+        </div>
+    </div>
+</aside>
+</body>
+</html>

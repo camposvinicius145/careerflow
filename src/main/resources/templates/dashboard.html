@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Visão geral')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('dashboard', ${currentUser})}"></aside>
+
+    <main class="main">
+        <header class="page-header">
+            <div>
+                <button class="menu-button" type="button" data-menu-toggle aria-label="Abrir menu">☰</button>
+                <p class="eyebrow">SEU PAINEL DE OPORTUNIDADES</p>
+                <h1>Olá, <span th:text="${#strings.substringBefore(currentUser.displayName() + ' ', ' ')}">Marina</span> <span class="wave">✦</span></h1>
+                <p class="page-subtitle">Aqui está o ritmo da sua busca nesta semana.</p>
+            </div>
+            <a class="button button-primary" href="/applications/new"><span>＋</span> Nova candidatura</a>
+        </header>
+
+        <div class="flash flash-success" th:if="${param.welcome}">
+            Conta criada. Seu novo workspace está pronto para a primeira oportunidade.
+        </div>
+
+        <section class="metrics-grid" aria-label="Métricas principais">
+            <article class="metric-card">
+                <div class="metric-top"><span class="metric-icon purple">↗</span><span class="trend">Pipeline</span></div>
+                <strong th:text="${dashboard.activeApplications()}">7</strong>
+                <p>Candidaturas ativas</p>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top"><span class="metric-icon orange">◎</span><span class="trend trend-warm">Em andamento</span></div>
+                <strong th:text="${dashboard.interviews()}">2</strong>
+                <p>Entrevistas marcadas</p>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top"><span class="metric-icon green">✦</span><span class="trend trend-green">Melhor etapa</span></div>
+                <strong th:text="${dashboard.offers()}">1</strong>
+                <p>Ofertas recebidas</p>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top"><span class="metric-icon blue">%</span><span class="trend">Conversão</span></div>
+                <strong><span th:text="${dashboard.responseRate()}">62</span><small>%</small></strong>
+                <p>Taxa de resposta</p>
+            </article>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="panel activity-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">CONSISTÊNCIA</p>
+                        <h2>Candidaturas por semana</h2>
+                    </div>
+                    <span class="panel-badge">Últimas 6 semanas</span>
+                </div>
+                <div class="bar-chart" aria-label="Gráfico de candidaturas por semana">
+                    <div class="chart-guide guide-1"></div>
+                    <div class="chart-guide guide-2"></div>
+                    <div class="chart-guide guide-3"></div>
+                    <div class="bar-item" th:each="point : ${dashboard.weeklySeries()}">
+                        <span class="bar-value" th:text="${point.value()}">2</span>
+                        <span class="bar" th:style="|height:${18 + point.value() * 24}px|"></span>
+                        <small th:text="${point.label()}">01 jul</small>
+                    </div>
+                </div>
+            </article>
+
+            <article class="panel pipeline-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">FUNIL ATUAL</p>
+                        <h2>Distribuição do pipeline</h2>
+                    </div>
+                    <a href="/applications" class="text-link">Ver quadro →</a>
+                </div>
+                <div class="pipeline-list">
+                    <div class="pipeline-row" th:each="entry : ${dashboard.pipeline()}">
+                        <span class="status-dot" th:classappend="'status-' + ${#strings.toLowerCase(entry.key.name())}"></span>
+                        <span class="pipeline-label" th:text="${entry.key.label}">Candidatado</span>
+                        <div class="progress-track">
+                            <span th:style="|width:${entry.value * 20}%|"></span>
+                        </div>
+                        <strong th:text="${entry.value}">3</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="dashboard-grid lower-grid">
+            <article class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">PRÓXIMOS PASSOS</p>
+                        <h2>Sua agenda</h2>
+                    </div>
+                </div>
+                <div class="empty-state compact" th:if="${#lists.isEmpty(dashboard.upcomingActions())}">
+                    <span>✓</span>
+                    <p>Nenhuma ação pendente. Um bom momento para prospectar.</p>
+                </div>
+                <a class="agenda-item"
+                   th:each="item : ${dashboard.upcomingActions()}"
+                   th:href="@{/applications/{id}/edit(id=${item.id})}">
+                    <span class="agenda-date">
+                        <strong th:text="${@dates.relative(item.nextActionAt)}">Amanhã</strong>
+                        <small th:text="${@dates.dateTime(item.nextActionAt)}">28 jul, 10:00</small>
+                    </span>
+                    <span class="agenda-copy">
+                        <strong th:text="${item.roleTitle}">Senior Java Engineer</strong>
+                        <small th:text="${item.company}">Mercado Livre</small>
+                    </span>
+                    <span class="arrow">→</span>
+                </a>
+            </article>
+
+            <article class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">MOVIMENTAÇÕES</p>
+                        <h2>Atualizadas recentemente</h2>
+                    </div>
+                </div>
+                <a class="recent-item"
+                   th:each="item : ${dashboard.recentApplications()}"
+                   th:href="@{/applications/{id}/edit(id=${item.id})}">
+                    <span class="company-mark" th:text="${#strings.substring(item.company, 0, 1)}">N</span>
+                    <span class="recent-copy">
+                        <strong th:text="${item.company}">Nubank</strong>
+                        <small th:text="${item.roleTitle}">Backend Engineer</small>
+                    </span>
+                    <span class="status-pill"
+                          th:classappend="'pill-' + ${#strings.toLowerCase(item.status.name())}"
+                          th:text="${item.status.label}">Candidatado</span>
+                </a>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

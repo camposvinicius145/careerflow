@@ -1,0 +1,43 @@
+### Variáveis
+@host = http://localhost:8080
+
+### Abra a documentação interativa
+GET {{host}}/api-docs
+
+### Liste as candidaturas
+# Requer uma sessão autenticada. Faça login no navegador ou forneça o cookie JSESSIONID.
+GET {{host}}/api/v1/applications
+Accept: application/json
+
+### Crie uma candidatura
+POST {{host}}/api/v1/applications
+Content-Type: application/json
+X-CSRF-TOKEN: {{csrfToken}}
+Cookie: JSESSIONID={{sessionId}}
+
+{
+  "company": "Acme",
+  "roleTitle": "Senior Java Engineer",
+  "location": "São Paulo, Brasil",
+  "jobUrl": "https://example.com/jobs/java-engineer",
+  "source": "LinkedIn",
+  "status": "APPLIED",
+  "workModel": "HYBRID",
+  "priority": "HIGH",
+  "salaryMin": 15000,
+  "salaryMax": 20000,
+  "salaryCurrency": "BRL",
+  "appliedAt": "2026-07-27",
+  "nextActionAt": "2026-07-29T13:00:00Z",
+  "notes": "Preparar exemplos de system design."
+}
+
+### Mova uma candidatura
+PATCH {{host}}/api/v1/applications/{{applicationId}}/status
+Content-Type: application/json
+X-CSRF-TOKEN: {{csrfToken}}
+Cookie: JSESSIONID={{sessionId}}
+
+{
+  "status": "INTERVIEW"
+}

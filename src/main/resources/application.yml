@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: careerflow
+  profiles:
+    default: demo
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  thymeleaf:
+    cache: false
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+  forward-headers-strategy: framework
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: CareerFlow
+    description: Job application intelligence dashboard
+    version: 0.1.0
+
+springdoc:
+  swagger-ui:
+    path: /docs
+    display-request-duration: true
+    operations-sorter: method
+  api-docs:
+    path: /api-docs
+
+careerflow:
+  demo-data: false
+  security:
+    remember-me-key: ${REMEMBER_ME_KEY:careerflow-local-development-key}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: demo
+  datasource:
+    url: jdbc:h2:mem:careerflow;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+careerflow:
+  demo-data: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/careerflow}
+    username: ${DATABASE_USERNAME:careerflow}
+    password: ${DATABASE_PASSWORD:careerflow}
+  thymeleaf:
+    cache: true
+
+server:
+  port: ${PORT:8080}
+
+careerflow:
+  demo-data: ${DEMO_DATA:false}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Meu pipeline')}"></head>
+<body>
+<div class="app-shell board-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('applications', ${currentUser})}"></aside>
+
+    <main class="main board-main">
+        <header class="page-header">
+            <div>
+                <button class="menu-button" type="button" data-menu-toggle aria-label="Abrir menu">☰</button>
+                <p class="eyebrow">VISÃO KANBAN</p>
+                <h1>Meu pipeline</h1>
+                <p class="page-subtitle">Arraste os cards para registrar o avanço de cada processo.</p>
+            </div>
+            <a class="button button-primary" href="/applications/new"><span>＋</span> Nova candidatura</a>
+        </header>
+
+        <div class="flash flash-success" th:if="${success}" th:text="${success}"></div>
+        <div class="flash flash-error" data-board-error hidden>
+            Não foi possível mover o card. Tente novamente.
+        </div>
+
+        <section class="kanban" aria-label="Pipeline de candidaturas">
+            <div class="kanban-column"
+                 th:each="status : ${statuses}"
+                 th:attr="data-status=${status.name()}">
+                <header class="column-header">
+                    <span class="status-dot" th:classappend="'status-' + ${#strings.toLowerCase(status.name())}"></span>
+                    <h2 th:text="${status.label}">Candidatado</h2>
+                    <span class="column-count" th:text="${#lists.size(columns.get(status))}">2</span>
+                </header>
+
+                <div class="column-dropzone">
+                    <article class="job-card"
+                             draggable="true"
+                             th:each="item : ${columns.get(status)}"
+                             th:attr="data-application-id=${item.id}">
+                        <div class="card-top">
+                            <span class="company-mark small" th:text="${#strings.substring(item.company, 0, 1)}">N</span>
+                            <span class="priority-indicator"
+                                  th:classappend="'priority-' + ${#strings.toLowerCase(item.priority.name())}"
+                                  th:title="${'Prioridade ' + #strings.toLowerCase(item.priority.label)}"></span>
+                        </div>
+                        <a th:href="@{/applications/{id}/edit(id=${item.id})}" class="job-card-link">
+                            <h3 th:text="${item.roleTitle}">Backend Engineer</h3>
+                            <p th:text="${item.company}">Nubank</p>
+                        </a>
+                        <div class="card-tags">
+                            <span th:text="${item.workModel.label}">Remoto</span>
+                            <span th:if="${item.location}" th:text="${item.location}">Brasil</span>
+                        </div>
+                        <div class="card-footer">
+                            <span th:if="${item.nextActionAt}">
+                                <span class="mini-icon">◷</span>
+                                <span th:text="${@dates.relative(item.nextActionAt)}">Amanhã</span>
+                            </span>
+                            <span th:unless="${item.nextActionAt}" class="muted">Sem próxima ação</span>
+                            <a th:href="@{/applications/{id}/edit(id=${item.id})}" aria-label="Editar candidatura">•••</a>
+                        </div>
+                    </article>
+
+                    <a class="empty-column-card"
+                       th:if="${#lists.isEmpty(columns.get(status))}"
+                       href="/applications/new">
+                        <span>＋</span>
+                        <small>Adicionar aqui</small>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <p class="kanban-tip"><span>↔</span> Dica: o quadro tem rolagem horizontal em telas menores.</p>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Criar conta')}"></head>
+<body class="auth-body">
+<main class="auth-shell">
+    <section class="auth-brand-panel register-visual">
+        <a class="brand light" href="/login">
+            <span class="brand-mark">C</span>
+            <span>Career<span>Flow</span></span>
+        </a>
+        <div class="auth-message">
+            <span class="auth-kicker">COMECE COM CLAREZA</span>
+            <h1>Transforme sua busca em um pipeline que trabalha por você.</h1>
+            <p>Crie seu espaço, priorize boas vagas e nunca perca o próximo passo.</p>
+        </div>
+        <div class="quote-card">
+            <span>“</span>
+            <p>O que é acompanhado pode ser melhorado.</p>
+        </div>
+    </section>
+
+    <section class="auth-form-panel">
+        <div class="auth-form-wrap">
+            <p class="eyebrow">SEU NOVO WORKSPACE</p>
+            <h2>Crie sua conta</h2>
+            <p class="auth-subtitle">Leva menos de um minuto.</p>
+
+            <form method="post" action="/register" class="auth-form" th:object="${registrationForm}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <label class="field">
+                    <span>Como podemos chamar você?</span>
+                    <input type="text" th:field="*{displayName}" placeholder="Seu nome" autocomplete="name" autofocus>
+                    <small class="field-error" th:errors="*{displayName}"></small>
+                </label>
+                <label class="field">
+                    <span>E-mail</span>
+                    <input type="email" th:field="*{email}" placeholder="voce@email.com" autocomplete="email">
+                    <small class="field-error" th:errors="*{email}"></small>
+                </label>
+                <label class="field">
+                    <span>Senha</span>
+                    <input type="password" th:field="*{password}" placeholder="Mínimo de 8 caracteres" autocomplete="new-password">
+                    <small class="field-error" th:errors="*{password}"></small>
+                </label>
+                <button class="button button-primary auth-submit" type="submit">Criar meu workspace <span>→</span></button>
+            </form>
+
+            <p class="terms">Ao continuar, você concorda em usar este projeto de demonstração de forma responsável.</p>
+            <p class="auth-switch">Já tem uma conta? <a href="/login">Entrar</a></p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

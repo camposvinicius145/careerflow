@@ -1,0 +1,3 @@
+* text=auto eol=lf
+mvnw.cmd text eol=crlf
+*.jpg binary

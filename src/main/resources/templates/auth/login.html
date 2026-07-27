@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+<body class="auth-body">
+<main class="auth-shell">
+    <section class="auth-brand-panel">
+        <a class="brand light" href="/login">
+            <span class="brand-mark">C</span>
+            <span>Career<span>Flow</span></span>
+        </a>
+        <div class="auth-message">
+            <span class="auth-kicker">ORGANIZE. AVANCE. CONQUISTE.</span>
+            <h1>Sua próxima oportunidade merece um processo melhor.</h1>
+            <p>Centralize candidaturas, entrevistas e follow-ups em um fluxo simples e visual.</p>
+        </div>
+        <div class="auth-proof">
+            <div><strong>Kanban</strong><span>Pipeline visual</span></div>
+            <div><strong>Insights</strong><span>Métricas úteis</span></div>
+            <div><strong>API</strong><span>Integração pronta</span></div>
+        </div>
+    </section>
+
+    <section class="auth-form-panel">
+        <div class="auth-form-wrap">
+            <p class="eyebrow">BEM-VINDO DE VOLTA</p>
+            <h2>Entre no seu workspace</h2>
+            <p class="auth-subtitle">Continue de onde parou e mantenha o ritmo.</p>
+
+            <div class="flash flash-error" th:if="${loginError}">E-mail ou senha incorretos.</div>
+            <div class="flash flash-success" th:if="${loggedOut}">Você saiu com segurança.</div>
+
+            <form method="post" action="/login" class="auth-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <label class="field">
+                    <span>E-mail</span>
+                    <input type="email" name="username" placeholder="voce@email.com" autocomplete="email" required autofocus>
+                </label>
+                <label class="field">
+                    <span>Senha</span>
+                    <input type="password" name="password" placeholder="Sua senha" autocomplete="current-password" required>
+                </label>
+                <label class="remember-field">
+                    <input type="checkbox" name="remember-me">
+                    <span>Manter conectado</span>
+                </label>
+                <button class="button button-primary auth-submit" type="submit">Entrar no CareerFlow <span>→</span></button>
+            </form>
+
+            <div class="demo-credentials">
+                <span class="demo-icon">✦</span>
+                <div>
+                    <strong>Acesso de demonstração</strong>
+                    <p><button type="button" data-demo-login>demo@careerflow.dev</button> · senha <code>demo123</code></p>
+                </div>
+            </div>
+
+            <p class="auth-switch">Ainda não tem uma conta? <a href="/register">Criar gratuitamente</a></p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

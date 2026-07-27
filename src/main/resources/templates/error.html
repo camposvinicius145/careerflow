@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Algo saiu do fluxo')}"></head>
+<body class="error-body">
+<main class="error-page">
+    <a class="brand" href="/dashboard"><span class="brand-mark">C</span><span>Career<span>Flow</span></span></a>
+    <div class="error-code" th:text="${status ?: '500'}">404</div>
+    <p class="eyebrow">ESSA ETAPA NÃO ESTAVA NO PLANO</p>
+    <h1 th:text="${status == 404 ? 'Não encontramos esta página.' : 'Algo inesperado aconteceu.'}">Página não encontrada.</h1>
+    <p>Volte ao painel e continue cuidando das suas oportunidades.</p>
+    <a class="button button-primary" href="/dashboard">Voltar à visão geral</a>
+</main>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${jobApplication == null ? 'Nova candidatura' : 'Editar candidatura'})}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar(${jobApplication == null ? 'new' : 'applications'}, ${currentUser})}"></aside>
+
+    <main class="main form-main">
+        <header class="page-header compact-header">
+            <div>
+                <button class="menu-button" type="button" data-menu-toggle aria-label="Abrir menu">☰</button>
+                <a href="/applications" class="back-link">← Voltar ao pipeline</a>
+                <p class="eyebrow" th:text="${jobApplication == null ? 'NOVA OPORTUNIDADE' : 'DETALHES DA OPORTUNIDADE'}">NOVA OPORTUNIDADE</p>
+                <h1 th:text="${jobApplication == null ? 'Adicionar candidatura' : jobApplication.company}">Adicionar candidatura</h1>
+                <p class="page-subtitle"
+                   th:text="${jobApplication == null ? 'Registre o essencial agora e complete ao longo do processo.' : jobApplication.roleTitle}">
+                    Registre o essencial agora.
+                </p>
+            </div>
+        </header>
+
+        <div class="flash flash-success" th:if="${success}" th:text="${success}"></div>
+
+        <div class="form-layout">
+            <form class="panel application-form"
+                  method="post"
+                  th:action="${jobApplication == null ? '/applications' : '/applications/' + jobApplication.id}"
+                  th:object="${applicationForm}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <section class="form-section">
+                    <div class="section-number">01</div>
+                    <div class="section-content">
+                        <div class="section-heading">
+                            <h2>Sobre a vaga</h2>
+                            <p>As informações que identificam esta oportunidade.</p>
+                        </div>
+                        <div class="field-grid two-columns">
+                            <label class="field">
+                                <span>Empresa <b>*</b></span>
+                                <input type="text" th:field="*{company}" placeholder="Ex.: Nubank" autofocus>
+                                <small class="field-error" th:errors="*{company}"></small>
+                            </label>
+                            <label class="field">
+                                <span>Cargo <b>*</b></span>
+                                <input type="text" th:field="*{roleTitle}" placeholder="Ex.: Backend Engineer">
+                                <small class="field-error" th:errors="*{roleTitle}"></small>
+                            </label>
+                            <label class="field">
+                                <span>Localização</span>
+                                <input type="text" th:field="*{location}" placeholder="São Paulo, Brasil">
+                                <small class="field-error" th:errors="*{location}"></small>
+                            </label>
+                            <label class="field">
+                                <span>Modelo de trabalho</span>
+                                <select th:field="*{workModel}">
+                                    <option th:each="option : ${workModels}"
+                                            th:value="${option}"
+                                            th:text="${option.label}"></option>
+                                </select>
+                            </label>
+                            <label class="field">
+                                <span>Link da vaga</span>
+                                <input type="url" th:field="*{jobUrl}" placeholder="https://...">
+                                <small class="field-error" th:errors="*{jobUrl}"></small>
+                            </label>
+                            <label class="field">
+                                <span>Origem</span>
+                                <input type="text" th:field="*{source}" placeholder="LinkedIn, indicação...">
+                                <small class="field-error" th:errors="*{source}"></small>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="section-number">02</div>
+                    <div class="section-content">
+                        <div class="section-heading">
+                            <h2>Pipeline e prioridade</h2>
+                            <p>Use estes dados para manter o quadro sempre confiável.</p>
+                        </div>
+                        <div class="field-grid three-columns">
+                            <label class="field">
+                                <span>Etapa atual</span>
+                                <select th:field="*{status}">
+                                    <option th:each="option : ${statuses}"
+                                            th:value="${option}"
+                                            th:text="${option.label}"></option>
+                                </select>
+                            </label>
+                            <label class="field">
+                                <span>Prioridade</span>
+                                <select th:field="*{priority}">
+                                    <option th:each="option : ${priorities}"
+                                            th:value="${option}"
+                                            th:text="${option.label}"></option>
+                                </select>
+                            </label>
+                            <label class="field">
+                                <span>Data da candidatura</span>
+                                <input type="date" th:field="*{appliedAt}">
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="section-number">03</div>
+                    <div class="section-content">
+                        <div class="section-heading">
+                            <h2>Compensação e próximo passo</h2>
+                            <p>Dados opcionais para comparar oportunidades e agir no prazo.</p>
+                        </div>
+                        <div class="field-grid salary-grid">
+                            <label class="field">
+                                <span>Moeda</span>
+                                <input type="text" th:field="*{salaryCurrency}" maxlength="3" placeholder="BRL">
+                                <small class="field-error" th:errors="*{salaryCurrency}"></small>
+                            </label>
+                            <label class="field">
+                                <span>Salário mínimo</span>
+                                <input type="number" th:field="*{salaryMin}" min="0" step="500" placeholder="12000">
+                                <small class="field-error" th:errors="*{salaryMin}"></small>
+                            </label>
+                            <label class="field">
+                                <span>Salário máximo</span>
+                                <input type="number" th:field="*{salaryMax}" min="0" step="500" placeholder="18000">
+                                <small class="field-error" th:errors="*{salaryMax}"></small>
+                            </label>
+                            <label class="field">
+                                <span>Próxima ação</span>
+                                <input type="datetime-local" th:field="*{nextActionAt}">
+                                <small class="field-hint">Entrevista, follow-up ou prazo do case.</small>
+                            </label>
+                        </div>
+                        <label class="field notes-field">
+                            <span>Notas</span>
+                            <textarea th:field="*{notes}" rows="5" placeholder="Contexto da conversa, pontos para estudar, contato do recrutador..."></textarea>
+                            <small class="field-error" th:errors="*{notes}"></small>
+                        </label>
+                    </div>
+                </section>
+
+                <footer class="form-actions">
+                    <a class="button button-secondary" href="/applications">Cancelar</a>
+                    <button class="button button-primary" type="submit">
+                        <span>✓</span>
+                        <span th:text="${jobApplication == null ? 'Adicionar ao pipeline' : 'Salvar alterações'}">Salvar</span>
+                    </button>
+                </footer>
+            </form>
+
+            <aside class="form-aside" th:if="${jobApplication != null}">
+                <article class="panel aside-card">
+                    <p class="eyebrow">RESUMO</p>
+                    <span class="status-pill large"
+                          th:classappend="'pill-' + ${#strings.toLowerCase(jobApplication.status.name())}"
+                          th:text="${jobApplication.status.label}">Entrevista</span>
+                    <dl class="detail-list">
+                        <div><dt>Criada em</dt><dd th:text="${@dates.dateTime(jobApplication.createdAt)}">20 jul</dd></div>
+                        <div><dt>Atualizada em</dt><dd th:text="${@dates.dateTime(jobApplication.updatedAt)}">27 jul</dd></div>
+                        <div><dt>Versão</dt><dd th:text="${jobApplication.version}">1</dd></div>
+                    </dl>
+                    <a class="button button-secondary full-button"
+                       th:if="${jobApplication.jobUrl}"
+                       th:href="${jobApplication.jobUrl}"
+                       rel="noopener noreferrer"
+                       target="_blank">Abrir anúncio ↗</a>
+                </article>
+
+                <article class="panel aside-card">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">HISTÓRICO</p>
+                            <h2>Linha do tempo</h2>
+                        </div>
+                    </div>
+                    <ol class="timeline">
+                        <li th:each="event : ${events}">
+                            <span class="timeline-dot"></span>
+                            <div>
+                                <p th:text="${event.description}">Candidatura atualizada.</p>
+                                <small th:text="${@dates.dateTime(event.occurredAt)}">27 jul, 10:00</small>
+                            </div>
+                        </li>
+                    </ol>
+                </article>
+
+                <article class="danger-zone">
+                    <h3>Remover candidatura</h3>
+                    <p>Esta ação também remove o histórico associado.</p>
+                    <form method="post"
+                          th:action="@{/applications/{id}/delete(id=${jobApplication.id})}"
+                          data-confirm="Remover esta candidatura permanentemente?">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="danger-button">Remover do CareerFlow</button>
+                    </form>
+                </article>
+            </aside>
+        </div>
+    </main>
+</div>
+</body>
+</html>
