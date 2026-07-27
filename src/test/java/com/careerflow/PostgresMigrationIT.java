@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.NONE,
+        webEnvironment = SpringBootTest.WebEnvironment.MOCK,
         properties = "careerflow.demo-data=false")
 @ActiveProfiles("test")
 @Testcontainers(disabledWithoutDocker = true)
